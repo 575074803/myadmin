@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="__ADMINCSS__/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__ADMINJS__/jquery.js"></script>
+</head>
+
+<body>
+
+	<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="<?php echo url('admin/index/main');?>">首页</a></li>
+    <li><a href="#">权限设置</a></li>
+    </ul>
+    </div>
+    
+    <div class="formbody">
+    
+    <div class="formtitle"><span>权限设置</span></div>
+    <form id="form" action="<?php echo url('admin/adminuser/adduser');?>" method="post">
+    <ul class="forminfo">
+    <li>此用户当前权限：
+		<?php
+			if($res['power'] == 1){ echo '超级管理员';}
+			if($res['power'] == 3){ echo '管理员';}
+		?>
+	</li>
+    <!-- <li><label>密码</label><input name="password" type="password" class="dfinput" /><i></i></li>
+    <li><label>重复密码</label><input name="repassword" type="password" class="dfinput" /><i></i></li> -->
+    <li>
+		<label>重设权限</label>
+		<cite>
+			<input name="power" type="radio" value="3" <?php if($res['power'] == 3){ echo 'checked="checked"';}?>  />管理员&nbsp;&nbsp;&nbsp;&nbsp;
+			<!-- <input name="power" type="radio" value="2" />网站运营&nbsp;&nbsp;&nbsp;&nbsp; -->
+			<input name="power" type="radio" value="1"  <?php if($res['power'] == 1){ echo 'checked="checked"';}?> />超级管理员
+		</cite>
+	</li>
+    
+    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="确认保存"/></li>
+    </ul>
+    </form>
+    
+    </div>
+	
+<script>
+/*
+	$(".btn").click(function(){
+		var action = $("#form").attr("action");
+		
+		$.post(action,$("#form").serialize(),function(data){
+			
+		
+		},"json");
+		
+		
+	});
+	
+	*/
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="__ADMINCSS__/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__ADMINJS__/jquery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".click").click(function(){
+  $(".tip").fadeIn(200);
+  });
+  
+  $(".tiptop a").click(function(){
+  $(".tip").fadeOut(200);
+});
+
+  $(".sure").click(function(){
+  $(".tip").fadeOut(100);
+});
+
+  $(".cancel").click(function(){
+  $(".tip").fadeOut(100);
+});
+
+});
+</script>
+</head>
+<body >
+
+	<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="<?php echo url('admin/index/main')?>">首页</a></li>
+    <li><a >管理员管理</a></li>
+	<a href="javascript:location.reload();"  style="float:right;line-height: 40px;padding-left: 7px;padding-right: 22px;">刷新</a>
+    </ul>
+    </div>
+    
+    <div class="rightinfo">
+		
+    	<div class="tools" style="margin:0;">
+    
+			<ul class="toolbar">
+			<a href="<?php echo url('admin/adminuser/adduser');?>"><li ><span><img src="__ADMINIMG__/t01.png" /></span>添加后台管理员</li></a>
+			
+			</ul>
+		</div>
+       
+    </div>
+    <table class="tablelist">
+    	<thead>
+    	<tr>
+        <th style="width:50px;">编号</th>
+        <th>用户名</th>
+		<th>拥有权限</th>
+		<th>登录时间</th>
+		<th>登录IP</th>
+		<th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+		
+			<?php foreach($res as $v){?>
+			<tr>
+				<td><?php echo $v['id'];?></td>
+				<td><?php echo $v['username'];?></td>
+				<td><?php 
+					echo $v['groupname'];
+				?></td>
+				<td><?php echo date('Y-m-d h:s',$v['logintime']);?></td>
+				<td><?php echo $v['loginip'];?></td>
+				<td>
+				
+					<?php if($v['checkadmin'] == 'true'){?>
+					<a href="<?php echo url('admin/adminuser/admin_check',['id'=>$v['id'],'checkadmin'=>'false','page'=>input('param.page')]);?>" class="tablelink">已审</a>   
+					<?php }else{?>
+					<a href="<?php echo url('admin/adminuser/admin_check',['id'=>$v['id'],'checkadmin'=>'true','page'=>input('param.page')]);?>" class="tablelink">未审</a>   
+					<?php }?>
+					
+					
+					<a href="<?php echo url('admin/adminuser/update_user',['id'=>$v['id'],'page'=>input('param.page')]);?>"   class="tablelink">修改</a>
+					
+					<a  id="shan" shid="<?php echo $v['id'];?>" class="tablelink" style="cursor:pointer;">删除</a>
+					
+					
+				</td>
+				
+			</tr> 
+			<?php }?>
+				
+        </tbody>
+    </table>
+
+    <div class="pagin">
+		
+		<?php echo $page;?>
+		
+    	<!-- <div class="message">共<i class="blue">1256</i>条记录，当前显示第&nbsp;<i class="blue">2&nbsp;</i>页</div>
+        <ul class="paginList">
+        <li class="paginItem"><a href="javascript:;"><span class="pagepre"></span></a></li>
+        <li class="paginItem"><a href="javascript:;">1</a></li>
+        <li class="paginItem current"><a href="javascript:;">2</a></li>
+        <li class="paginItem"><a href="javascript:;">3</a></li>
+        <li class="paginItem"><a href="javascript:;">4</a></li>
+        <li class="paginItem"><a href="javascript:;">5</a></li>
+        <li class="paginItem more"><a href="javascript:;">...</a></li>
+        <li class="paginItem"><a href="javascript:;">10</a></li>
+		<li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>
+        </ul> -->
+    </div>
+    
+    
+    <!--  删除 -->
+   <script>
+		$("a#shan").click(function(){
+			$("#s").attr("style","display:block");
+			var id = $(this).attr("shid");
+			var page = $(this).attr("page");
+			
+			
+			$("#delid").attr("value",id);
+			$("#delpage").attr("value",page);
+			
+		});
+		
+	</script>
+	<div id="s" class="tip" style="">
+    	<div class="tiptop"><span>删除提示</span><a></a></div>
+        
+      <div class="tipinfo">
+        <span><img src="__ADMINIMG__/ticon.png" /></span>
+        <div class="tipright">
+        <p>是否确认删除此用户？</p>
+        <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+        </div>
+        </div>
+        
+        <div class="tipbtn">
+			<input name="" type="button"  class="cancel" value="取消" style="float:right;margin-right:30px;"/>
+		<form action="<?php echo url('admin/adminuser/del_user')?>" method="post" style="float:right;">
+			<input id="delid" type="hidden" name="id" value="">	
+			<input id="delpage" type="hidden" name="page" value="<?php echo input('param.page');?>">	
+				
+			<input type="submit"  class="sure" value="确定" />&nbsp;
+		</form>	
+			
+        </div>
+    
+    </div>
+    </div>
+    
+</body>
+
+</html>

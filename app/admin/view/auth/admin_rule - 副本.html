@@ -1,0 +1,212 @@
+<?php
+use think\Db;
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>H+ 11后台主题UI框架 - 数据表格</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> 
+	<link href="__ADMINCSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__ADMINCSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+
+    <!-- Data Tables -->
+    <link href="__ADMINCSS__/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
+    <link href="__ADMINCSS__/animate.min.css" rel="stylesheet">
+    <link href="__ADMINCSS__/style.min.css?v=4.0.0" rel="stylesheet">
+    <!-- Sweet Alert -->
+    <link href="__ADMINCSS__/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+	<style>
+		.table {color:#000;}
+	</style>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+       
+		
+		<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>权限列表</h5>
+                        <div class="ibox-tools">
+                            <a href="javascript:location=location;">
+                                刷新
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+						<div class="">
+                            <a href="{:url('ruleAdd')}"  class=" btn btn-primary ">添加权限</a>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th >图标</th>
+                                    <th>权限名称</th>
+                                    <th>控制器/方法</th>
+                                    <th>是否验证权限</th>
+                                    <th>菜单状态</th>
+                                    <th >排序</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+								<?php
+			
+								function Show($id=0, $i=0)
+								{
+									$row=Db::name('authRule')->where('pid',$id)->order('orderid asc')->select();
+									foreach($row as $vo){
+								?>
+                                <tr  id="data<?php echo $vo['id'];?>">
+                                    <td>{$vo['id']}</td>
+                                    <td >
+										<?php if($vo['icon']){?>
+										<i class="fa fa-<?php echo $vo['icon'];?>"></i>
+										<?php }?>
+									</td>
+                                    <td>
+										<?php
+											for($j=0;$j<$i;$j++){
+												if($vo['pid'] != 0){
+														echo '|—';
+													}
+											}
+										?>
+										{$vo['title']}
+									</td>
+                                    <td>{$vo['href']}</td>
+                                    <td >
+										<?php 
+											if($vo['authopen'] == 1){ $val = 0;}else{ $val = 1;}
+										?>
+										<a href="javascript:;" onclick="ajaxAuthOpen(this,'authRule','authopen',<?php echo $vo['id'];?>,<?php echo $val;?>)" class="btn btn-primary btn-sm <?php if($val == 1){ echo 'btn-warning';}else{echo 'btn-danger';}?>">
+											<?php if($val == 1){ echo '需要验证';}else{echo '无需验证';}?>
+										</a>
+									
+									</td>
+									<td>
+										<?php 
+											if($vo['menustatus'] == 1){ $val = 0;}else{ $val = 1;}
+										?>
+										<a href="javascript:;" onclick="ajaxMenuStatus(this,'authRule','menustatus',<?php echo $vo['id'];?>,<?php echo $val;?>)" class="btn btn-primary btn-sm <?php if($vo['menustatus'] == 1){ echo 'btn-warning';}else{echo 'btn-danger';}?>">
+											<?php if($vo['menustatus'] == 1){ echo '显示状态';}else{echo '隐藏状态';}?>
+										</a>
+										
+									</td>
+									<td >
+										<input onBlur="ajaxSort(this,'authRule',<?php echo $vo['id'];?>);" type="text" value="{$vo['orderid']}" style="width:40px;text-align:center;">
+									</td>
+									<td>
+									<a href="{:url('ruleAdd',array('id'=>$vo['id']))}"  class=" btn btn-primary btn-sm btn-info">添加子权限</a>
+									<a href="{:url('admin/auth/ruleEdit',array('id'=>$vo['id']))}"  class=" btn btn-primary btn-sm">修改</a>
+									<a authid="{$vo['id']}" class="demo3  btn btn-primary btn-sm btn-danger ">删除</a>
+									
+									</td>
+                                </tr>
+								<?php
+									Show($vo['id'],$i+1);
+									}
+								}
+								Show();
+								?>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <script src="__ADMINJS__/jquery-2.1.1.js"></script>
+    <script>
+		//是否验证权限 
+		function ajaxAuthOpen(ele,tablename,field,id,value){
+			$.post('<?php echo url('admin/Ajaxdo/check');?>', {tablename:tablename,field:field,id:id,value:value}, function (data) {
+				if(data.status == 200){
+					if(data.value == 0){
+						$(ele).removeClass("btn-warning").addClass("btn-danger");
+						$(ele).html("无需验证");
+					}else{
+						$(ele).removeClass("btn-danger").addClass("btn-warning");
+						$(ele).html("需要验证");
+					}
+					var fun = "ajaxAuthOpen(this,'authRule','authopen',"+id+","+data.value+")";
+					$(ele).attr("onclick",fun);
+				}	
+			},'json');
+		}
+		
+		//菜单状态
+		function ajaxMenuStatus(ele,tablename,field,id,value){
+			$.post('<?php echo url('admin/Ajaxdo/check');?>', {tablename:tablename,field:field,id:id,value:value}, function (data) {
+				if(data.status == 200){
+					if(data.value == 0){
+						$(ele).removeClass("btn-danger").addClass("btn-warning");
+						
+						$(ele).html("显示状态");
+					}else{
+						$(ele).removeClass("btn-warning").addClass("btn-danger");
+						$(ele).html("隐藏状态");
+					}
+					var fun = "ajaxMenuStatus(this,'authRule','menustatus',"+id+","+data.value+")";
+					$(ele).attr("onclick",fun);
+				}	
+			},'json');
+		}
+		
+		//排序更改
+		function ajaxSort(ele,tablename,id){
+			var tval = $(ele).val(); 
+			$.post('<?php echo url('admin/Ajaxdo/ajaxSort');?>', {tablename:tablename,id:id,tval:tval}, function (data) {
+				if(data.status == 200){
+					alert(data.msg);
+					location=location;
+				}	
+			},'json');
+			
+		}
+		
+	</script>
+	<!-- 删除弹出框 -->
+	<script src="__ADMINJS__/plugins/sweetalert/sweetalert.min.js"></script>
+    <script>
+        $('.demo3').click(function () {
+			var authid = $(this).attr("authid");
+			swal({
+				title: "您确定要删除这条信息吗",
+				text: "删除后将无法恢复，请谨慎操作！",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "删除",
+				closeOnConfirm: false
+			}, function () {
+				$.post('<?php echo url('admin/Ajaxdo/ajaxAlert');?>', {tablename:"authRule",id:authid,whereid:'id'}, function (data) {
+					if(data.status == 200){
+						swal("删除成功！", "您已经永久删除了这条信息。", "success");
+						$("#data"+authid).css("display","none");
+					}	
+				},'json');
+				
+				
+			});
+		});
+	</script>
+</body>
+
+</html>

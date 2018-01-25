@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>H+ 后台主题UI框架 - 基本表单</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMINCSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__ADMINCSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMINCSS__/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMINCSS__/animate.min.css" rel="stylesheet">
+    <link href="__ADMINCSS__/style.min.css?v=4.0.0" rel="stylesheet">
+	
+	<script src="__ADMINJS__/jquery-2.1.1.js"></script>
+	
+	<!-- layui -->
+	<link rel="stylesheet" href="__ADMINCSS__/style.css"  media="all">
+	<link rel="stylesheet" href="__LAYUI__/css/layui.css"  media="all">
+	<script src="__LAYUI__/layui.js" charset="utf-8"></script>
+	<!-- layui下拉多选-->
+	<script src="__LAYUI__/layui-mz-min.js" charset="utf-8"></script>
+	
+	
+	<!-- ueditor编辑器 -->
+	<script type="text/javascript" charset="utf-8" src="__ADMIN__/ueditor/ueditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="__ADMIN__/ueditor/ueditor.all.min.js"> </script>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>修改</h5>
+                        <div class="ibox-tools">
+                            <a href="javascript:location=location;"> 刷新</a>
+                        </div>
+                    </div>
+					<form action="{:url('admin/empty/edit')}" method="post" class="form-horizontal">
+						<input type="hidden" name="catid" value="{:input('param.catid')}">
+						<input type="hidden" name="id" value="{:input('param.id')}">
+                    <div id="field_html" class="ibox-content">
+                        <style>
+						.typeTable tr{padding-bottom: 5px;}
+						</style>
+						{volist name="arr_field" id="vo"}
+							
+							<!-- 单行文本-->
+							{if condition="$vo.type == 'title'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+						
+									<div class="col-sm-5">
+										<input id="{$vo.field}" name="{$vo.field}" value="{$table_res[$vo.field]}" {if condition="$vo.required == 1"}required{/if} type='{if condition="$vo.setup.ispassword == 0"}text{else}password{/if}' class="form-control" size="50"    >
+									</div>
+								</div>
+								
+							{/if}
+							<!-- 单图片-->
+							{if condition="$vo.type == 'image'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+						
+									<div class="col-sm-5">
+										<input value="{$table_res[$vo.field]}" id="{$vo.field}" name="{$vo.field}" type="text" class="form-control" placeholder="可上传{if condition="$vo.setup.upload_allowext"} {$vo.setup.upload_allowext}{else/} {:config("cfg_upload_img_type")} {/if}格式" {if condition="$vo.required == 1"}required{/if}  >
+										
+										<div class="layui-upload">
+										  <button class="layui-btn" id="{$vo.field}upload" type="button">上传图片</button>（可上传{if condition="$vo.setup.upload_allowext"} {$vo.setup.upload_allowext}{else/} {:config("cfg_upload_img_type")} {/if}格式）
+										  <div class="layui-upload-list">
+											<img src="{if condition='$table_res[$vo.field]'}{$table_res[$vo.field]}{/if}" class="layui-upload-img" id="{$vo.field}demopic" style="width: 100px;">
+											<p id="demoText"></p>
+										  </div>
+										</div> 
+									</div>
+								
+								</div>
+								<script>
+									layui.use(['upload','form', 'layedit', 'laydate'], function(){
+									  var $ = layui.jquery
+									  ,upload = layui.upload;
+									  
+									  //普通图片上传
+									  var uploadInst = upload.render({
+										elem: '#{$vo.field}upload',
+										url: '{:url("upFiles/upload")}',
+										exts: '{if condition="$vo.setup.upload_allowext"} {$vo.setup.upload_allowext}{else/} {:config("cfg_upload_img_type")} {/if}', //那么，就只会支持这三种格式的上传。注意是用|分割。
+										size : 1000 ,//限制1M
+										before: function(obj){
+										  //预读本地文件示例，不支持ie8
+										  obj.preview(function(index, file, result){
+											$('#{$vo.field}demopic').attr('src', result); //图片链接（base64）
+										  });
+										},
+										done: function(res){
+										  //如果上传失败
+										  if(res.code == 0){
+											return layer.msg('上传失败');
+										  }
+										  //上传成功
+										  if(res.code == 1){
+											$("#{$vo.field}").val(res.url);
+										  }
+										},
+										error: function(){
+										  //演示失败状态，并实现重传
+										  var demoText = $('#demoText');
+										  demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+										  demoText.find('.demo-reload').on('click', function(){
+											uploadInst.upload();
+										  });
+										}
+									  });
+									  
+									});
+								</script>
+							{/if}
+							<!-- 多图上传 -->
+							{if condition="$vo.type == 'images'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										<div class="layui-form layui-form-pane"> 
+											<div class="layui-upload">
+												
+											  <button type="button" class="layui-btn" id="{$vo.field}upload">多图片上传</button> （可上传{if condition="$vo.setup.upload_allowext"} {$vo.setup.upload_allowext}{else/} {:config("cfg_upload_img_type")} {/if}格式）
+											  <br >
+												预览图：
+												<div class="layui-upload-list " id="{$vo.field}show" >
+													
+													{volist name="$table_res[$vo.field]" id="vo2"}
+													<div class="imgBox" >
+							                            <i  title="点击删除" class="fa fa-times dImg" data-url="/static/admin/img/fa0d05e6b71299299d4a0e5a1cb199ec.jpg"></i>
+							                           <div class="imageBox">
+							                           		<a href="'+res.url+'" target="_blank" title="点击查看">
+							                                	<img src="{$vo2[0]}">
+							                           		</a>
+							                            </div>
+							                            <div>
+							                    				<input type="hidden" name="{$vo.field}[{$i-1}]" value="{$vo2[0]}">
+							                    				<input name="{$vo.field}_name[{$i-1}]" class="layui-input pics" value="{$vo2[1]}">
+							                    		</div>
+							                      	</div>
+							                      	{/volist}
+						
+												</div>
+											 
+											</div>
+										</div>
+									</div>
+								</div>
+								<script>
+									layui.use('upload', function(){
+									  var $ = layui.jquery
+									  ,upload = layui.upload;
+									  var urls = '';
+									  var i = {$i}+1;
+									  //多图片上传
+									  upload.render({
+										elem: '#{$vo.field}upload'
+										,url: '{:url("upFiles/uploads")}'
+										,multiple: true
+										,exts: '{if condition="$vo.setup.upload_allowext"} {$vo.setup.upload_allowext}{else/} {:config("cfg_upload_img_type")} {/if}'
+										,before: function(obj){
+										  //预读本地文件示例，不支持ie8
+										  obj.preview(function(index, file, result){
+											//$('#demo2').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="width:100px;height:92px;margin-right:5px;">')
+										  });
+										}
+										,done: function(res){
+											var root_path = $("#root_path").val();
+						
+											var con ='';
+											con+='	<div class="imgBox" >';
+						                    con+='        <i  title="点击删除" class="fa fa-times dImg" data-url="/static/admin/img/fa0d05e6b71299299d4a0e5a1cb199ec.jpg"></i>';
+						                    con+='        <div class="imageBox"><a href="'+res.url+'" target="_blank" title="点击查看">';
+						                    con+='            <img src="'+res.url+'"></a>';
+						                    con+='        </div>';
+						                    con+='        <div>';
+						                    con+=' 				<input type="hidden" name="{$vo.field}['+i+']" value="'+res.url+'">';
+						                    con+='				<input name="{$vo.field}_name['+i+']" class="layui-input pics" value="'+res.file_name+'">';
+						                    con+='		</div>';
+						                    con+='  </div>';
+						
+											$("#{$vo.field}show").append(con);
+											
+											i++;
+										}
+									  });
+									 
+									});
+								</script>
+								<script>
+									$("#{$vo.field}show").on("click","i",function(){
+									   	$(this).parents(".imgBox").remove();
+									});
+								</script>
+							{/if}
+							<!-- 文件上传 file-->
+							{if condition="$vo.type == 'file'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+						
+									<div class="col-sm-5">
+										<input value="{$table_res[$vo.field]}" id="{$vo.field}" name="{$vo.field}" type="text" class="form-control" placeholder="" {if condition="$vo.required == 1"}required{/if}  >
+										
+										<div class="layui-upload">
+										  	<button class="layui-btn" id="{$vo.field}upload" type="button">上传文件</button>
+										  	（可上传{if condition="$vo.setup.upload_allowext"} {$vo.setup.upload_allowext}{else/} {:config("cfg_upload_soft_type")} {/if}格式）
+										  
+										</div> 
+									</div>
+								
+								</div>
+								<script>
+									layui.use(['upload','form', 'layedit', 'laydate'], function(){
+									  var $ = layui.jquery
+									  ,upload = layui.upload;
+									  
+									  //普通图片上传
+									  var uploadInst = upload.render({
+										elem: '#{$vo.field}upload',
+										url: '{:url("upFiles/upload")}',
+										exts: '{if condition="$vo.setup.upload_allowext"} {$vo.setup.upload_allowext}{else/} {:config("cfg_upload_soft_type")} {/if}', //那么，就只会支持这三种格式的上传。注意是用|分割。
+										size : 1000 ,//限制1M
+										before: function(obj){
+										  //预读本地文件示例，不支持ie8
+										  
+										},
+										done: function(res){
+										  //如果上传失败
+										  if(res.code == 0){
+											return layer.msg('上传失败');
+										  }
+										  //上传成功
+										  if(res.code == 1){
+											$("#{$vo.field}").val(res.url);
+										  }
+										},
+										error: function(){
+										  //演示失败状态，并实现重传
+										  var demoText = $('#demoText');
+										  demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+										  demoText.find('.demo-reload').on('click', function(){
+											uploadInst.upload();
+										  });
+										}
+									  });
+									  
+									});
+								</script>
+							{/if}
+							<!-- 多行文本-->
+							{if condition="$vo.type == 'textarea'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										<textarea id="{$vo.field}" name="{$vo.field}" class="form-control" style="height:90px;" {if condition="$vo.required == 1"}required{/if}>{$table_res[$vo.field]}</textarea>
+									</div>
+								</div>
+							{/if}
+							<!-- 编辑器 -->
+							{if condition="$vo.type == 'editor'"}
+								<!-- layui编辑器 -->
+								{if condition="$vo.setup.edittype == 'layedit'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										<textarea class="layui-textarea" id="{$vo.field}" name="{$vo.field}" style="display: none">{$table_res[$vo.field]}</textarea>
+									</div>
+								</div>
+								<script>
+								layui.use('layedit', function(){
+								  var layedit = layui.layedit
+								  ,$ = layui.jquery;
+								  
+								  layedit.set({  
+										uploadImage: {  
+											url: "{:url('admin/UpFiles/layedit_upload')}" //接口url  
+										  , type: 'post' //默认post  
+										}  
+									});
+								  
+								  var index = layedit.build("{$vo.field}");
+								});
+								</script>
+								{/if}
+								<!-- 百度编辑器 -->
+								{if condition="$vo.setup.edittype == 'UEditor'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-6">
+										<script id="{$vo.field}" name="{$vo.field}"  type="text/plain" style="height:300px;">{$table_res[$vo.field]}</script>
+										<script type="text/javascript">
+											var ue = UE.getEditor("{$vo.field}");
+											//ue.setContent("{$table_res[$vo.field]}", true);
+											//ue.setContent("内容");
+										</script>
+									</div>
+								</div>
+								{/if}
+								
+							{/if}
+							<!-- 单选框 -->
+							{if condition="$vo.type == 'radio'"}
+							<div class="form-group">
+								<label class="col-sm-3 control-label">{$vo.name}</label>
+								<div class="col-sm-5">
+									<div class="radio i-checks">
+										<label>
+											{volist name="$vo.setup.options" id="ra"}
+											<input type="radio" {if condition="$key == 0"}checked{/if} value="{$ra.1}" name="{$vo.field}"> <i></i> {$ra.0}
+											{/volist}
+											
+										</label>
+									</div>
+								</div>
+							</div>
+							{/if}
+							<!-- 复选框 -->
+							{if condition="$vo.type == 'checkbox'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										
+										<div class="checkbox i-checks">
+											<label>
+												{volist name="$vo.setup.options" id="ra"}
+												<input type="checkbox" name = "{$vo.field}[]" value="{$ra.1}" {if condition="in_array($ra.1,$table_res[$vo.field])"}checked{/if} > <i></i>{$ra.0}
+												{/volist}
+												
+											</label>
+										</div>
+										
+									</div>
+								</div>
+							{/if}
+							<!-- 数字 -->
+							{if condition="$vo.type == 'number'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										<input value="{$table_res[$vo.field]}" type="text" class="form-control" id="{$vo.field}" name="{$vo.field}"  placeholder="{$vo.setup.dian}" {if condition="$vo.required == 1"}required{/if}  >
+									</div>
+								</div>
+							{/if}
+							<!-- 日期 -->
+							{if condition="$vo.type == 'datetime'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										<input value="{$table_res[$vo.field]}"  type="datetime" class="form-control" id="{$vo.field}" name="{$vo.field}" value="" placeholder="" {if condition="$vo.required == 1"}required{/if}  >
+										<script>
+											layui.use('laydate', function(){
+											  var laydate = layui.laydate;
+											  
+											  //常规用法
+											  laydate.render({
+												elem: '#{$vo.field}',
+												type: 'datetime'
+											  });
+											  
+											});
+											</script>
+									</div>
+								</div>
+							{/if}
+							<!-- 下拉框 -->
+							{if condition="$vo.type == 'select'"}
+								<!-- 单选下拉 -->
+								{if condition="$vo.setup.multiple ==1"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										<select  class="form-control m-b" id="{$vo.field}" name="{$vo.field}">
+											<option value=""></option>
+											{volist name="$vo.setup.options" id="ra"}
+											<option value="{$ra.1}" {if condition="$ra.1 == $table_res[$vo.field]"}selected{/if} >{$ra.0}</option>
+											{/volist}
+										</select>
+									</div>
+								</div>
+								{/if}
+								<!-- 多选下拉 -->
+								{if condition="$vo.setup.multiple ==0"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div class="col-sm-5">
+										<div class="layui-form layui-form-pane">  
+										  <div class="layui-form-item">
+												<div >
+													<select id="{$vo.field}" name="{$vo.field}" multiple="multiple">
+														<option value=""></option>
+														{volist name="$vo.setup.options" id="ra"}
+														<option value="{$ra.1}" {if condition="in_array($ra.1,$table_res[$vo.field])"}selected{/if} >{$ra.0}</option>
+														{/volist}
+														
+													</select>
+												</div>
+											</div>
+										 </div>
+										<script>
+										layui.use(['form',  'jquery'], function(){
+										  var form = layui.form
+										  ,$ = layui.jquery;
+										  
+										   layui.selMeltiple($); 
+										});
+										</script>
+									</div>
+								</div>
+								{/if}
+							{/if}
+							
+							<!-- 联动菜单 -->
+							{if condition="$vo.type == 'linkage'"}
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{$vo.name}</label>
+									<div id="{$vo.field}">
+										<div class="col-sm-2" >
+											<select  class="form-control m-b prov " style="width:200px;" name="{$vo.field}_prov"></select>	
+										</div>
+										<div class="col-sm-2" >
+											<select  class="form-control m-b city " style="width:200px;" name="{$vo.field}_city"></select>
+										</div>
+										<div class="col-sm-2" >
+											<select  class="form-control m-b dist " style="width:200px;" name="{$vo.field}_dist"></select>
+										</div>
+									</div>
+								</div>
+								
+								<script>
+									(function($) {
+										$.fn.citySelect = function(settings) {
+											if (this.length < 1) {
+												return;
+											}
+											// 默认值
+											settings = $.extend({
+												url: "__ADMINJS__/city.min.js",
+												prov: null,
+												city: null,
+												dist: null,
+												nodata: null,
+												required: true
+											}, settings);
+						
+											var box_obj = this;
+											var prov_obj = box_obj.find(".prov");
+											var city_obj = box_obj.find(".city");
+											var dist_obj = box_obj.find(".dist");
+											var prov_val = settings.prov;
+											var city_val = settings.city;
+											var dist_val = settings.dist;
+											var select_prehtml = (settings.required) ? "" : "<option value=''>请选择</option>";
+											var city_json;
+						
+											// 赋值市级函数
+											var cityStart = function() {
+												var prov_id = prov_obj.get(0).selectedIndex;
+												if (!settings.required) {
+													prov_id--;
+												}
+												;
+												city_obj.empty().attr("disabled", true);
+												dist_obj.empty().attr("disabled", true);
+						
+												if (prov_id < 0 || typeof (city_json.citylist[prov_id].c) == "undefined") {
+													if (settings.nodata == "none") {
+														city_obj.css("display", "none");
+														dist_obj.css("display", "none");
+													} else if (settings.nodata == "hidden") {
+														city_obj.css("visibility", "hidden");
+														dist_obj.css("visibility", "hidden");
+													}
+													;
+													return;
+												}
+												;
+						
+												// 遍历赋值市级下拉列表
+												temp_html = select_prehtml;
+												$.each(city_json.citylist[prov_id].c, function(i, city) {
+													temp_html += "<option value='" + city.n + "'>" + city.n + "</option>";
+												});
+												city_obj.html(temp_html).attr("disabled", false).css({"display": "", "visibility": ""});
+												distStart();
+											};
+						
+											// 赋值地区（县）函数
+											var distStart = function() {
+												var prov_id = prov_obj.get(0).selectedIndex;
+												var city_id = city_obj.get(0).selectedIndex;
+												if (!settings.required) {
+													prov_id--;
+													city_id--;
+												}
+												;
+												dist_obj.empty().attr("disabled", true);
+						
+												if (prov_id < 0 || city_id < 0 || typeof (city_json.citylist[prov_id].c[city_id].a) == "undefined") {
+													if (settings.nodata == "none") {
+														dist_obj.css("display", "none");
+														$('.quxian').css('display','none');
+														
+													} else if (settings.nodata == "hidden") {
+														dist_obj.css("visibility", "hidden");
+														
+													}
+													;
+													return;
+												}else{
+												
+												$('.quxian').css('display','block');
+												}
+												;
+						
+												// 遍历赋值市级下拉列表
+												temp_html = select_prehtml;
+												$.each(city_json.citylist[prov_id].c[city_id].a, function(i, dist) {
+													temp_html += "<option value='" + dist.s + "'>" + dist.s + "</option>";
+												});
+												dist_obj.html(temp_html).attr("disabled", false).css({"display": "", "visibility": ""});
+											};
+						
+											var init = function() {
+												// 遍历赋值省份下拉列表
+												temp_html = select_prehtml;
+												$.each(city_json.citylist, function(i, prov) {
+													temp_html += "<option value='" + prov.p + "'>" + prov.p + "</option>";
+												});
+												prov_obj.html(temp_html);
+						
+												// 若有传入省份与市级的值，则选中。（setTimeout为兼容IE6而设置）
+												setTimeout(function() {
+													if (settings.prov != null) {
+														prov_obj.val(settings.prov);
+														cityStart();
+														setTimeout(function() {
+															if (settings.city != null) {
+																city_obj.val(settings.city);
+																distStart();
+																setTimeout(function() {
+																	if (settings.dist != null) {
+																		dist_obj.val(settings.dist);
+																	}
+																	;
+																}, 1);
+															}
+															;
+														}, 1);
+													}
+													;
+												}, 1);
+						
+												// 选择省份时发生事件
+												prov_obj.bind("change", function() {
+													cityStart();
+												});
+						
+												// 选择市级时发生事件
+												city_obj.bind("change", function() {
+													distStart();
+												});
+											};
+						
+											// 设置省市json数据
+											if (typeof (settings.url) == "string") {
+												$.getJSON(settings.url, function(json) {
+													city_json = json;
+													init();
+												});
+											} else {
+												city_json = settings.url;
+												init();
+											}
+											;
+										};
+									})(jQuery);
+											
+								</script>
+								
+						        <script type="text/javascript">
+									
+						            $(function() {
+						                $("#{$vo.field}").citySelect({
+						                    prov: "{$table_res[$vo.field]['prov']}",
+						                    city: "{$table_res[$vo.field]['city']}",
+						                    dist: "{$table_res[$vo.field]['dist']}",
+						                    nodata: "none"
+						                });
+						            });
+						        </script>
+							{/if}
+						{/volist}
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-2">
+									
+									<button class="btn btn-primary" type="submit">保存内容</button>
+									<button onclick="javascript:history.back();" class="btn btn-white" type="button">返回</button>
+								</div>
+							</div>
+						
+							
+						<script>
+							$(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})});
+						</script>
+						
+						
+                    </div>
+					<!--
+					<script>
+						$(function(){
+							$.post("{:url('admin/empty/edit')}", { catid:{$catid},id:{$id}}, function (data) {
+								$("#field_html").html(data);
+							});
+						});
+					</script>
+					-->
+					</form>
+					
+					 
+
+					
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
+   
+    <script src="__ADMINJS__/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})});
+    </script>
+    
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+<?php
+use think\Db;
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>H+ 后台主题UI框架 - 基本表单</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMINCSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__ADMINCSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMINCSS__/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMINCSS__/animate.min.css" rel="stylesheet">
+    <link href="__ADMINCSS__/style.min.css?v=4.0.0" rel="stylesheet">
+    
+    <!-- layui -->
+	<link rel="stylesheet" href="__ADMINCSS__/style.css"  media="all">
+	<link rel="stylesheet" href="__LAYUI__/css/layui.css"  media="all">
+	<script src="__LAYUI__/layui.js" charset="utf-8"></script>
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>添加友情链接</h5>
+                        <div class="ibox-tools">
+                            <a href="javascript:location=location;">刷新</a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <form action="{:url('admin/link/add')}" method="post" class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">所属分类</label>
+								<div class="col-sm-5">
+									<select  class="form-control m-b" name="classid">
+										<?php
+										function Show($id=0, $i=0,$siteid)
+										{
+											$res=Db::name('weblinktype')->where('parentid',$id)->where('siteid',$siteid)->order('orderid asc')->select();
+											foreach($res as $vo){
+										?>
+											<option value="{$vo['id']}" >
+											<?php
+												for($j=0;$j<$i;$j++){
+													if($vo['parentid'] != 0){
+															echo '|—';
+														}
+												}
+											?>
+											{$vo['classname']}
+											</option>
+										<?php
+											Show($vo['id'],$i+1,$siteid);
+											}
+										}
+										
+										Show(0,0,$siteid);
+										?>
+									</select>
+								</div>
+							</div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">网站名称</label>
+
+                                <div class="col-sm-5">
+                                    <input name="webname" type="text" class="form-control" placeholder="请输入网站名称" required="" >
+                                </div>
+                            </div>
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">跳转链接</label>
+
+                                <div class="col-sm-5">
+                                    <input name="linkurl" type="text" class="form-control" placeholder="请输入跳转链接" >
+                                </div>
+                            </div>
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label">网站详述</label>
+								<div class="col-sm-5">
+									<textarea  name="webnote" class="form-control" style="height:90px;" ></textarea>
+								</div>
+								<label class="col-sm-2 control-label"></label>
+							</div>
+							<div class="form-group">
+									<label class="col-sm-2 control-label">缩略图片</label>
+						
+									<div class="col-sm-5">
+										<input id="picurl" name="picurl" type="text" class="form-control" placeholder=""  >
+										
+										<div class="layui-upload">
+										  <button class="layui-btn" id="upload" type="button">上传图片</button>（可上传jpg|jpeg|gif|png格式）
+										  <div class="layui-upload-list">
+											<img class="layui-upload-img" id="demopic" style="width: 100px;">
+											<p id="demoText"></p>
+										  </div>
+										</div> 
+									</div>
+								
+								</div>
+								<script>
+									layui.use(['upload','form', 'layedit', 'laydate'], function(){
+									  var $ = layui.jquery
+									  ,upload = layui.upload;
+									  
+									  //普通图片上传
+									  var uploadInst = upload.render({
+										elem: '#upload',
+										url: '{:url("upFiles/upload")}',
+										exts: 'jpg|jpeg|gif|png', //那么，就只会支持这三种格式的上传。注意是用|分割。
+										size : 1000 ,//限制1M
+										before: function(obj){
+										  //预读本地文件示例，不支持ie8
+										  obj.preview(function(index, file, result){
+											$('#demopic').attr('src', result); //图片链接（base64）
+										  });
+										},
+										done: function(res){
+										  //如果上传失败
+										  if(res.code == 0){
+											return layer.msg('上传失败');
+										  }
+										  //上传成功
+										  if(res.code == 1){
+											$("#picurl").val(res.url);
+										  }
+										},
+										error: function(){
+										  //演示失败状态，并实现重传
+										  var demoText = $('#demoText');
+										  demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+										  demoText.find('.demo-reload').on('click', function(){
+											uploadInst.upload();
+										  });
+										}
+									  });
+									  
+									});
+								</script>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">更新时间</label>
+								<div class="col-sm-5">
+									<input  type="datetime" class="form-control" id="posttime" name="posttime" value="{:getTimeDate()}" placeholder="" >
+									<script>
+										layui.use('laydate', function(){
+										  var laydate = layui.laydate;
+										  
+										  //常规用法
+										  laydate.render({
+											elem: '#posttime',
+											type: 'datetime'
+										  });
+										  
+										});
+										</script>
+								</div>
+							</div>
+						
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button class="btn btn-primary" type="submit">保存内容</button>
+                                    <button onclick="javascript:history.back();" class="btn btn-white" type="button">返回</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="__ADMINJS__/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMINJS__/bootstrap.min.js?v=3.3.5"></script>
+    <script src="__ADMINJS__/content.min.js?v=1.0.0"></script>
+    <script src="__ADMINJS__/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})});
+    </script>
+    
+</body>
+
+</html>

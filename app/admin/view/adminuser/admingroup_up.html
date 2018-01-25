@@ -1,0 +1,430 @@
+<?php 
+use think\Db;
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="__ADMINCSS__/style.css" rel="stylesheet" type="text/css" />
+<link href="__ADMINCSS__/select.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__ADMINJS__/jquery.js"></script>
+<script type="text/javascript" src="__ADMINJS__/jquery.idTabs.min.js"></script>
+<script type="text/javascript" src="__ADMINJS__/select-ui.min.js"></script>
+
+<!-- 上传图片 -->
+<link rel="stylesheet" href="__zyupload__/css/zyUpload.css" type="text/css">
+<script type="text/javascript" src="__zyupload__/js/zyFile.js"></script>
+<script type="text/javascript" src="__zyupload__/js/zyUpload.js"></script>
+
+
+
+<link rel="stylesheet" href="__ADMINKIN__/themes/default/default.css" />
+<link rel="stylesheet" href="__ADMINKIN__/plugins/code/prettify.css" />
+<script charset="utf-8" src="__ADMINKIN__/kindeditor.js"></script>
+<script charset="utf-8" src="__ADMINKIN__/lang/zh_CN.js"></script>
+<script charset="utf-8" src="__ADMINKIN__/plugins/code/prettify.js"></script>
+<script>
+	
+	KindEditor.ready(function(K) {
+			
+			window.editor = K.create('#content',{
+				items : [
+					'source','|','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+					'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+					'insertunorderedlist', '|',  'image', 'link']
+			});
+	});
+</script>
+
+<script type="text/javascript" src="__ADMINJS__/checkf.func.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(e) {
+    $(".select1").uedSelect({
+		width : 345			  
+	});
+	$(".select2").uedSelect({
+		width : 175  
+	});
+	$(".select3").uedSelect({
+		width : 100
+	});
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".click").click(function(){
+  $(".tip").fadeIn(200);
+  });
+  
+  $(".tiptop a").click(function(){
+  $(".tip").fadeOut(200);
+});
+
+  $(".sure").click(function(){
+  $(".tip").fadeOut(100);
+});
+
+  $(".cancel").click(function(){
+  $(".tip").fadeOut(100);
+});
+
+});
+</script>
+
+</head>
+
+<body>
+
+	<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="<?php echo url('admin/index/main');?>">首页</a></li>
+    <li><a href="#">修改管理组</a></li>
+	<a href="javascript:location.reload();"  style="float:right;line-height: 40px;padding-left: 7px;padding-right: 22px;">刷新</a>
+    </ul>
+    </div>
+    
+    <div class="formbody">
+    
+    <form  action="<?php echo url('admin/adminuser/admingroup_up');?>" method="post" onsubmit="return cfm_infoclass();">
+	<input type="hidden" name="id" value="<?php echo input('param.id');?>">
+	
+    <ul class="forminfo">
+	
+	<li>
+		<label >管理组名称</label>
+		<input id="groupname" name="groupname" type="text" class="dfinput" value="<?php echo $res['groupname'];?>" /><b>*</b>
+	</li>
+	<li>
+		<label >管理组描述</label>
+		<textarea id="description" name="description" cols="" rows="" class="textinput" style="width:325px;height:80px;"><?php echo $res['description'];?></textarea>
+	</li>
+	
+	
+	<li>
+		<label>默认进入站</label><cite>
+		<?php
+			foreach($site as $v){
+				if($v['id'] == 1)
+						$checked = 'checked="checked"';
+					else
+						$checked = '';
+
+					echo '<input type="radio" name="groupsite" value="'.$v['id'].'" '.$checked.' />&nbsp;'.$v['sitename'].'&nbsp;&nbsp;&nbsp;&nbsp;';
+			}
+		?>
+		
+	</li>
+    
+	
+	
+	<li>
+		<label>管理组状态</label>
+		<cite>
+			<input name="checkinfo" type="radio" value="true" checked="checked" />启用&nbsp;&nbsp;&nbsp;&nbsp;
+			<input name="checkinfo" type="radio" value="false" />未启用
+		
+		
+		</cite>
+	</li>
+	
+	<li>
+		<label >模块权限</label>
+		
+		
+		
+		<?php if($level == 1){?>
+		
+		<label style="color:red;">所有权限</label>
+		<?php }else{?>
+		<div class="vocation">
+			<div class="purviewTitle"><strong>网站系统管理</strong></div>
+				<div class="purviewList"> <span>
+					<input type="checkbox" name="model[]" value="admin" <?php echo GetModelPriv('admin',input('param.id')); ?> />
+					管理员管理</span> <span>
+					<input type="checkbox" name="model[]" value="site" <?php echo GetModelPriv('site',input('param.id')); ?>/>
+					站点配置管理</span> <span>
+					<input type="checkbox" name="model[]" value="web_config" <?php echo GetModelPriv('web_config',input('param.id')); ?>/>
+					网站信息配置</span> <span>
+					<input type="checkbox" name="model[]" value="upload_filemgr_sql" <?php echo GetModelPriv('upload_filemgr_sql',input('param.id')); ?>/>
+					上传文件管理</span> <span>
+					<input type="checkbox" name="model[]" value="database" <?php echo GetModelPriv('database',input('param.id')); ?>/>
+					数据库管理</span></div>
+				<div class="purviewTitle"><strong>栏目内容管理</strong></div>
+				<div class="purviewList"> <span>
+					<input type="checkbox" name="model[]" value="infoclass" <?php echo GetModelPriv('infoclass',input('param.id')); ?>/>
+					栏目管理</span> <span>
+					<input type="checkbox" name="model[]" value="maintype" <?php echo GetModelPriv('maintype',input('param.id')); ?>/>
+					二级类别管理</span> <span>
+					<input type="checkbox" name="model[]" value="info" <?php echo GetModelPriv('info',input('param.id')); ?>/>
+					单页信息管理</span> <span>
+					<input type="checkbox" name="model[]" value="infolist" <?php echo GetModelPriv('infolist',input('param.id')); ?>/>
+					列表信息管理</span> <span>
+					<input type="checkbox" name="model[]" value="infoimg" <?php echo GetModelPriv('infoimg',input('param.id')); ?>/>
+					图片信息管理</span> <span>
+					<input type="checkbox" name="model[]" value="soft"  <?php echo GetModelPriv('soft',input('param.id')); ?>/>
+					软件下载管理</span> <span>
+					<input type="checkbox" name="model[]" value="fragment"  <?php echo GetModelPriv('fragment',input('param.id')); ?>/>
+					碎片数据管理</span> <span>
+					<input type="checkbox" name="model[]" value="diymodel"  <?php echo GetModelPriv('diymodel',input('param.id')); ?>/>
+					自定义模型</span> <span>
+					<input type="checkbox" name="model[]" value="diyfield"  <?php echo GetModelPriv('diyfield',input('param.id')); ?>/>
+					自定义字段</span> <span>
+					<input type="checkbox" name="model[]" value="infoflag"  <?php echo GetModelPriv('infoflag',input('param.id')); ?>/>
+					信息标记管理</span> <span>
+					<input type="checkbox" name="model[]" value="infosrc"  <?php echo GetModelPriv('infosrc',input('param.id')); ?>/>
+					信息来源管理</span></div>	
+				<div class="purviewTitle"><strong>模块扩展管理</strong></div>
+				<div class="purviewList"> <span>
+					<input type="checkbox" name="model[]" value="member"  <?php echo GetModelPriv('member',input('param.id')); ?>/>
+					用户管理</span> <span>
+					<input type="checkbox" name="model[]" value="usergroup"  <?php echo GetModelPriv('usergroup',input('param.id')); ?>/>
+					用户组管理</span> <span>
+					<input type="checkbox" name="model[]" value="userfavorite"  <?php echo GetModelPriv('userfavorite',input('param.id')); ?>/>
+					用户收藏管理</span> <span>
+					<input type="checkbox" name="model[]" value="usercomment"  <?php echo GetModelPriv('usercomment',input('param.id')); ?>/>
+					用户评论管理</span> <span>
+					<input type="checkbox" name="model[]" value="message"  <?php echo GetModelPriv('message',input('param.id')); ?>/>
+					留言模块管理</span> <span>
+					<input type="checkbox" name="model[]" value="admanage"  <?php echo GetModelPriv('admanage',input('param.id')); ?>/>
+					广告模块管理</span> <span>
+					<input type="checkbox" name="model[]" value="adtype"  <?php echo GetModelPriv('adtype',input('param.id')); ?>/>
+					广告位管理</span> <span>
+					<input type="checkbox" name="model[]" value="weblink"  <?php echo GetModelPriv('weblink',input('param.id')); ?>/>
+					友情链接管理</span> <span>
+					<input type="checkbox" name="model[]" value="weblinktype"  <?php echo GetModelPriv('weblinktype',input('param.id')); ?>/>
+					友情链接分类</span> <span>
+					<input type="checkbox" name="model[]" value="job"  <?php echo GetModelPriv('job',input('param.id')); ?>/>
+					招聘模块管理</span> <span>
+					<input type="checkbox" name="model[]" value="vote"  <?php echo GetModelPriv('vote',input('param.id')); ?>/>
+					投票模块管理</span> <span>
+					<input type="checkbox" name="model[]" value="cascade"  <?php echo GetModelPriv('cascade',input('param.id')); ?>/>
+					级联数据管理</span> </div>
+				<div class="purviewTitle"><strong>商品订单管理</strong></div>
+				<div class="purviewList"> <span>
+					<input type="checkbox" name="model[]" value="goodstype"  <?php echo GetModelPriv('goodstype',input('param.id')); ?>/>
+					商品类别管理</span> <span>
+					<input type="checkbox" name="model[]" value="goodsbrand"  <?php echo GetModelPriv('goodsbrand',input('param.id')); ?>/>
+					品牌类型管理</span> <span>
+					<input type="checkbox" name="model[]" value="goods"  <?php echo GetModelPriv('goods',input('param.id')); ?>/>
+					商品列表管理</span> <span>
+					<input type="checkbox" name="model[]" value="goodsorder"  <?php echo GetModelPriv('goodsorder',input('param.id')); ?>/>
+					商品订单管理</span> <span>
+					<input type="checkbox" name="model[]" value="postmode"  <?php echo GetModelPriv('postmode',input('param.id')); ?>/>
+					配送方式管理</span> <span>
+					<input type="checkbox" name="model[]" value="paymode"  <?php echo GetModelPriv('paymode',input('param.id')); ?>/>
+					支付方式管理 </span> <span>
+					<input type="checkbox" name="model[]" value="getmode"  <?php echo GetModelPriv('getmode',input('param.id')); ?>/>
+					货到方式管理</span> <span>
+					<input type="checkbox" name="model[]" value="goodsflag"  <?php echo GetModelPriv('goodsflag',input('param.id')); ?>/>
+					商品信息属性</span></div>
+				<div class="purviewTitle"><strong>模板界面管理</strong></div>
+				<div class="purviewList"> <span>
+					<input type="checkbox" name="model[]" value="nav"  <?php echo GetModelPriv('nav',input('param.id')); ?>/>
+					导航菜单设置</span> <span>
+					<input type="checkbox" name="model[]" value="diymenu"  <?php echo GetModelPriv('diymenu',input('param.id')); ?>/>
+					自定义菜单项</span> <span>
+					<input type="checkbox" name="model[]" value="mobile"  <?php echo GetModelPriv('mobile',input('param.id')); ?>/>
+					手机网站设置</span> <span>
+					<input type="checkbox" name="model[]" value="editfile"  <?php echo GetModelPriv('editfile',input('param.id')); ?>/>
+					默认模板设置</span></div>
+				<div class="purviewTitle"><strong>帮助与更新</strong></div>
+				<div class="purviewList"> <span>
+					<input type="checkbox" name="model[]" value="syscount"  <?php echo GetModelPriv('syscount',input('param.id')); ?>/>
+					数据统计</span> <span>
+					<input type="checkbox" name="model[]" value="upload_file"  <?php echo GetModelPriv('upload_file',input('param.id')); ?>/>
+					上传新文件</span> <span>
+					<input type="checkbox" name="model[]" value="check_bom"  <?php echo GetModelPriv('check_bom',input('param.id')); ?>/>
+					BOM检查</span> <span>
+					<input type="checkbox" name="model[]" value="help" <?php echo GetModelPriv('help',input('param.id')); ?>/>
+					开发帮助</span></div>
+				<div class="purviewSel"><a href="javascript:;" onclick="SelModel(true)">全选</a>&nbsp;&nbsp;<a href="javascript:;" onclick="SelModel(false)">反选</a></div>	
+		</div>
+		<?php }?>
+	</li>
+	
+	
+	<li>
+		<label >栏目权限</label>
+		
+		
+		<?php if($level == 1){?>
+		
+		<label style="color:red;">所有权限</label>
+		<?php }else{?>
+		<div class="vocation" style="width:80%;">
+			
+			<?php
+			
+			$siteshow=Db::name('site')->select();
+			
+			//$dosql->Execute("SELECT * FROM `#@__site` ORDER BY `id` ASC");
+			$i = 1;
+
+			foreach($siteshow as $row)
+			{
+				echo '<div class="purviewTitle"><strong>'.$row['sitename'].'</strong></div>';
+
+				Show($row['id'],input('param.id'));
+
+				echo '<div class="purviewSel"><a href="javascript:;" onclick="SelPriv('.$row['id'].',true)">全选</a>&nbsp;&nbsp;<a href="javascript:;" onclick="SelPriv('.$row['id'].',false)">反选</a></div>';
+
+				$i++;
+			}
+			
+			?>
+			
+			
+		</div>
+		<?php }?>
+	</li>
+	<li></li>
+	
+    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="提交"/>   <input onclick="history.go(-1);" type="button" class="btn2" value="返回"/></li>
+    </ul>
+    </form>
+    
+    </div>
+	<?php
+		function Show($siteid,$groupid){
+			
+			$res = Db::name('infoclass')->field("*,concat(parentstr,'',id) as path")->where('siteid',$siteid)->order('path,orderid')->select();
+			
+			foreach($res as $k=>$v){
+				$res[$k]['count']=count(explode(',',$v['path']));
+			} 
+			
+			foreach($res as $v){
+				
+			//选择权限
+			$cktop = '';
+			//echo "SELECT * FROM `sh_adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$v['id']." AND `action`='list'";
+			
+			$r_list = Db::query("SELECT * FROM `sh_adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$v['id']." AND `action`='list'");
+			//dump($r_list);
+			if($r_list && is_array($r_list))
+			{
+				$cklist = 'checked="checked"';
+				$cktop = 'checked="checked"';
+			}
+			else
+			{
+				$cklist = '';
+			}
+			
+			//$r_add = $dosql->GetOne("SELECT * FROM `#@__adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$row['id']." AND `action`='add'");
+			$r_add = Db::query("SELECT * FROM `sh_adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$v['id']." AND `action`='add'");
+			
+			if($r_add && is_array($r_add))
+			{
+				$ckadd = 'checked="checked"';
+				$cktop = 'checked="checked"';
+			}
+			else
+			{
+				$ckadd = '';
+			}
+			
+			//$r_update = $dosql->GetOne("SELECT * FROM `#@__adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$row['id']." AND `action`='update'");
+			$r_update = Db::query("SELECT * FROM `sh_adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$v['id']." AND `action`='update'");
+			
+			if($r_update && is_array($r_update))
+			{
+				$ckupdate = 'checked="checked"';
+				$cktop = 'checked="checked"';
+			}
+			else
+			{
+				$ckupdate = '';
+			}
+			
+			//$r_del = $dosql->GetOne("SELECT * FROM `#@__adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$row['id']." AND `action`='del'");
+			$r_del = Db::query("SELECT * FROM `sh_adminprivacy` WHERE `groupid`=$groupid AND `siteid`=$siteid AND `model`='category' AND `classid`=".$v['id']." AND `action`='del'");
+			
+			if($r_del && is_array($r_del))
+			{
+				$ckdel = 'checked="checked"';
+				$cktop = 'checked="checked"';
+			}
+			else
+			{
+				$ckdel = '';
+			}			
+			?>	
+			<table class="tablelist" style="border:0;" >
+				<tbody>
+				<tr>
+					<td style="border:0;width:%5;"><input type="checkbox" name="siteid[<?php echo $siteid; ?>]" value="<?php echo $siteid; ?>" onclick="SelRole(<?php echo $siteid; ?>,<?php echo $v['id']; ?>,this);" <?php echo $cktop; ?>/></td>
+					<td style="border:0;width:70%;">
+					<?php
+					for($i=0;$i<$v['count'];$i++){
+						if($v['parentid'] != 0){
+								echo '&nbsp;&nbsp;&nbsp;';
+							}
+        			}
+					if($v['parentid'] != 0){
+						echo '└&nbsp;';
+					}
+					
+					echo $v['classname'];
+					if($v['infotype'] == 0 ){ echo '<i style="color:#BBBBBB;font-style:normal">[单页]</i>';}
+					if($v['infotype'] == 1 ){ echo '<i style="color:#BBBBBB;font-style:normal">[列表]</i>';}
+					if($v['infotype'] == 2 ){ echo '<i style="color:#BBBBBB;font-style:normal">[图片]</i>';}
+					if($v['infotype'] == 3 ){ echo '<i style="color:#BBBBBB;font-style:normal">[下载]</i>';}
+					if($v['infotype'] == 4 ){ echo '<i style="color:#BBBBBB;font-style:normal">[商品]</i>';}
+					?>
+					
+					</td>
+					<td style="border:0;width:25%;" >
+						
+						<div class="purviewList"> 
+							<span style="width:50px;">
+							<input type="checkbox" name="priv[<?php echo $siteid; ?>][<?php echo $v['id']; ?>][]" value="list" <?php echo $cklist; ?>/>查看
+							</span> 
+							<span style="width:50px;">
+							<input type="checkbox" name="priv[<?php echo $siteid; ?>][<?php echo $v['id']; ?>][]" value="add" <?php echo $ckadd; ?>/>添加
+							
+							</span> 
+							<span style="width:50px;">
+							<input type="checkbox" name="priv[<?php echo $siteid; ?>][<?php echo $v['id']; ?>][]" value="update" <?php echo $ckupdate; ?>/>修改
+							</span> 
+							<span style="width:50px;">
+							<input type="checkbox" name="priv[<?php echo $siteid; ?>][<?php echo $v['id']; ?>][]" value="del" <?php echo $ckdel; ?>/>删除
+							</span>
+						</div>
+						
+						
+					</td>
+				</tr> 
+				      
+				</tbody>
+			</table>
+			<?php	
+			}
+			
+			
+		}
+		
+		
+	?>
+	<script>
+		function cfm_infoclass()
+		{
+			
+			if($("#groupname").val() == "")
+			{
+				alert("管理组名称不能为空！");
+				$("#groupname").focus();
+				return false;
+			}
+			
+			
+		}
+	</script>
+
+
+</body>
+
+</html>

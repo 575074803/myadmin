@@ -1,0 +1,391 @@
+<style>
+.typeTable tr{padding-bottom: 5px;}
+</style>
+{switch name="type" }
+{case value="title2"}
+<table class="typeTable" cellpadding="2" cellspacing="1" width="100%">
+    <tr>
+        <td width="120">标题图片</td>
+        <td>
+            <input type="radio" name="setup[thumb]" value="1" title="是">
+            <input type="radio" name="setup[thumb]" value="0" checked title="否">
+        </td>
+    </tr>
+    <tr>
+        <td>标题样式</td>
+        <td>
+            <input type="radio" name="setup[style]" value="1" title="是">
+            <input type="radio" name="setup[style]" value="0" checked title=" 否">
+        </td>
+    </tr>
+    <!--<tr>
+        <td>文本框长度</td>
+        <td><input type="text" class="layui-input input-text" size="5" name="setup[size]" value="" /></td>
+    </tr>-->
+</table>
+{/case}
+{case value="title" }
+	<div class="form-group">
+		<label class="col-sm-3 control-label">默认值</label>
+
+		<div class="col-sm-5">
+			<input  type="text" class="form-control" size="50"  name="setup[default]" value="{$setup.default}"  >
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">
+			是否为密码框
+		</label>
+		<div class="radio i-checks">
+			<label>
+				<input type="radio" value="1" name="setup[ispassword]" {if condition="$setup.ispassword == 1"}checked{/if}> <i></i> 是
+				<input type="radio" value="0" name="setup[ispassword]" {if condition="$setup.ispassword == 0"}checked{/if}> <i></i> 否
+				
+			</label>
+		</div>
+	</div>
+	<input type="hidden" id="varchar" name="setup[fieldtype]" value="varchar"/>
+
+
+{/case}
+{case value="textarea" }
+	<div class="form-group">
+		<label class="col-sm-3 control-label">字段类型</label>
+		<div class="col-sm-5">
+			<select  class="form-control m-b" name="setup[fieldtype]">
+				<option value="mediumtext" {if condition="$setup.fieldtype == 'mediumtext'"}selected{/if} >MEDIUMTEXT</option>
+				<option value="text" {if condition="$setup.fieldtype == 'text'"}selected{/if} >TEXT</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">默认值</label>
+		<div class="col-sm-5">
+			<textarea name="setup[default]" rows="3" cols="40" class="form-control" style="width:400px;height:90px;">{$setup.default}</textarea>
+		</div>
+		
+	</div>
+
+
+
+{/case}
+{case value="select" }
+	<div class="form-group">
+		<label class="col-sm-3 control-label">选项列表:<br>例: <font color="red">选项名称|值</font></label>
+		<div class="col-sm-5">
+			<textarea name="setup[options]"  class="form-control" style="width:400px;height:90px;">{$setup.options}</textarea>
+		</div>
+		
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">
+			选项类型
+		</label>
+		<div class="radio i-checks">
+			<label>
+				<input type="radio"  value="1" name="setup[multiple]" {if condition="$setup.multiple == 1"}checked{/if}> <i></i> 下拉框
+				<input type="radio"  value="0" name="setup[multiple]" {if condition="$setup.multiple == 0"}checked{/if}> <i></i> 多选列表框
+				
+			</label>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">字段类型</label>
+		<div class="col-sm-5">
+			<select name="setup[fieldtype]" onchange="javascript:numbertype(this.value);" class="form-control m-b" >
+				<option value="varchar" {if condition="$setup.fieldtype == 'varchar'"}selected{/if} >字符 VARCHAR</option>
+                <option value="tinyint" {if condition="$setup.fieldtype == 'tinyint'"}selected{/if}>整数 TINYINT(3)</option>
+                <option value="smallint" {if condition="$setup.fieldtype == 'smallint'"}selected{/if}>整数 SMALLINT(5)</option>
+                <option value="mediumint" {if condition="$setup.fieldtype == 'mediumint'"}selected{/if}>整数 MEDIUMINT(8)</option>
+                <option value="int" {if condition="$setup.fieldtype == 'int'"}selected{/if}>整数 INT(10)</option>
+			</select>
+			<span id="numbertype" style="display:none;"  >
+				<div class="checkbox i-checks">
+					<label>
+						<input type="checkbox" name = "setup[numbertype]" value="1" {if condition="$setup.numbertype == 1"}checked{/if} > <i></i>不包括负数
+					</label>
+				</div>
+            </span>
+			
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label">可见选项的数目</label>
+
+		<div class="col-sm-5">
+			<input  type="text" class="form-control" size="5" name="setup[size]" value="{$setup.size}"  >
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label">默认值</label>
+
+		<div class="col-sm-5">
+			<input  type="text" class="form-control" size="5"  name="setup[default]" value="{$setup.default}"  >
+		</div>
+	</div>
+{/case}
+{case value="editor"}
+	<div class="form-group">
+		<label class="col-sm-3 control-label">编辑器类型：</label>
+		<div class="col-sm-5">
+			<select name="setup[edittype]" class="form-control m-b" >
+				<option value="layedit" {if condition="$setup.edittype == 'layedit'"}selected{/if}>layedit</option>
+				<option value="UEditor" {if condition="$setup.edittype == 'UEditor'"}selected{/if}>UEditor</option>
+			</select>
+		</div>
+	</div>
+
+{/case}
+{case value="datetime"}
+
+{/case}
+{case value="groupid"}
+<div class="form-group">
+	<label class="col-sm-3 control-label">
+		选项类型
+	</label>
+	<div class="radio i-checks">
+		<label>
+			<input type="radio"  name="setup[inputtype]" value="checkbox"  {if condition=" $setup.inputtype =='checkbox'"}checked{/if} > <i></i> 复选框
+			<input type="radio"  name="setup[inputtype]" value="select" {if condition=" $setup.inputtype =='select'"}checked{/if}> <i></i> 下拉列表框
+			<input type="radio"  name="setup[inputtype]" value="radio" {if condition=" $setup.inputtype =='radio'"}checked{/if}> <i></i> 单选框
+			
+		</label>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">字段类型</label>
+	<div class="col-sm-5">
+		<select name="setup[fieldtype]"  onchange="javascript:numbertype(this.value);" class="form-control m-b" >
+			<option value="varchar" {if condition=" $setup.fieldtype =='varchar'"}selected{/if} >字符 VARCHAR</option>
+            <option value="tinyint" {if condition=" $setup.fieldtype =='tinyint'"}selected{/if}>整数 TINYINT(3)</option>
+		</select>
+		<span id="numbertype" {if condition="$setup.fieldtype == 'varchar'"}style="display:none;"{/if}  >
+			<div class="checkbox i-checks">
+				<label>
+					<input type="checkbox" name = "setup[numbertype]" value="1" {if condition=" $setup.numbertype ==1"}checked{/if} > <i></i>不包括负数
+				</label>
+			</div>
+		
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">默认值</label>
+
+	<div class="col-sm-5">
+		<input  type="text" class="form-control" size="5"  name="setup[default]" value="{$setup.default}" >
+	</div>
+</div>
+
+{/case}
+{case value="typeid"}
+<table class="typeTable" c cellpadding="2" cellspacing="1" width="100%">
+    <tr>
+        <td width="120">选项类型</td>
+        <td>
+            <input type="radio" name="setup[inputtype]" value="checkbox" title="复选框">
+            <input type="radio" name="setup[inputtype]" value="select" title="下拉列表框">
+            <input type="radio" name="setup[inputtype]" value="radio" checked title="单选框">
+        </td>
+    </tr>
+    <tr>
+        <td>字段类型</td>
+        <td>
+            <select name="setup[fieldtype]"  onchange="javascript:numbertype(this.value);">
+                <option value="varchar" selected>字符 VARCHAR</option>
+                <option value="tinyint" >整数 TINYINT(3)</option>
+                <option value="smallint" >整数 SMALLINT(5)</option>
+            </select>
+            <span id="numbertype" style="display:none;"  >
+                <input type="checkbox" id="" name = "setup[numbertype]" value="1" checked title="不包括负数"/>不包括负数
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td>顶级类别ID</td>
+        <td> <input type="text" class="input-text layui-input" size="5"  name="setup[default]" value="" /></td>
+    </tr>
+</table>
+{/case}
+{case value="posid"}
+
+{/case}
+{case value="radio"}
+
+<div class="form-group">
+	<label class="col-sm-3 control-label">选项列表:<br>例: <font color="red">选项名称|值,选项名称|值</font></label>
+	<div class="col-sm-5">
+		<textarea name="setup[options]" rows="5" cols="40" class="form-control" style="width:400px;height:90px;">{$setup.options}</textarea>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label">字段类型</label>
+	<div class="col-sm-5">
+		<select name="setup[fieldtype]" onchange="javascript:numbertype(this.value);"  class="form-control m-b">
+			<option value="varchar" {if condition="$setup.fieldtype == 'varchar'"}selected{/if}>字符 VARCHAR</option>
+			<option value="tinyint" {if condition="$setup.fieldtype == 'tinyint'"}selected{/if}>整数 TINYINT(3)</option>
+			<option value="smallint" {if condition="$setup.fieldtype == 'smallint'"}selected{/if}>整数 SMALLINT(5)</option>
+			<option value="mediumint" {if condition="$setup.fieldtype == 'mediumint'"}selected{/if}>整数 MEDIUMINT(8)</option>
+			<option value="int" {if condition="$setup.fieldtype == 'int'"}selected{/if}>整数 INT(10)</option>
+		</select>
+		<span id="numbertype" {if condition="$setup.fieldtype == 'varchar'"}style="display:none;"{/if}   >
+			
+			<div class="checkbox i-checks">
+				<label>
+					<input type="checkbox" name = "setup[numbertype]" value="1" {if condition="$setup.numbertype == 1"}checked{/if}> <i></i>不包括负数
+				</label>
+			</div>
+		
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">默认值</label>
+
+	<div class="col-sm-5">
+		<input  type="text" class="form-control" size="5"  name="setup[default]" value="{$setup.default}"  >
+	</div>
+</div>
+
+
+
+{/case}
+{case value="checkbox"}
+<div class="form-group">
+	<label class="col-sm-3 control-label">选项列表:<br>例: <font color="red">选项名称|值,选项名称|值</font></label>
+	<div class="col-sm-5">
+		<textarea name="setup[options]" rows="5" cols="40" class="form-control" style="width:400px;height:90px;">{$setup.options}</textarea>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">字段类型</label>
+	<div class="col-sm-5">
+		<select name="setup[fieldtype]" onchange="javascript:numbertype(this.value);" class="form-control m-b">
+			<option value="varchar" {if condition = "$setup.fieldtype == 'varchar'"}selected{/if}>字符 VARCHAR</option>
+			<option value="tinyint" {if condition = "$setup.fieldtype == 'tinyint'"}selected{/if}>整数 TINYINT(3)</option>
+			<option value="smallint" {if condition = "$setup.fieldtype == 'smallint'"}selected{/if}>整数 SMALLINT(5)</option>
+			<option value="mediumint" {if condition = "$setup.fieldtype == 'mediumint'"}selected{/if}>整数 MEDIUMINT(8)</option>
+			<option value="int" {if condition = "$setup.fieldtype == 'int'"}selected{/if}>整数 INT(10)</option>
+		</select>
+		<span id="numbertype" {if condition="$setup.fieldtype == 'varchar'"}style="display:none;"{/if} >
+			<div class="checkbox i-checks">
+				<label>
+					<input type="checkbox" name = "setup[numbertype]" value="1" {if condition = "$setup.numbertype == 1"}checked{/if} > <i></i>不包括负数
+				</label>
+			</div>
+		
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">默认值</label>
+
+	<div class="col-sm-5">
+		<input  type="text" class="form-control" size="5"  name="setup[default]" value="{$setup.default}"  >
+	</div>
+</div>
+
+
+
+{/case}
+{case value="number"}
+<div class="form-group">
+    <label class="col-sm-3 control-label">是否包括负数：</label>
+    <div class="col-sm-5">
+        
+        <div class="checkbox i-checks">
+			<label>
+				<input type="checkbox" name = "setup[numbertype]" value="1" {if condition="$setup.numbertype == 1"}checked{/if} > <i></i>不包括负数
+			</label>
+		</div>
+        
+    </div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">小数位数：</label>
+	<div class="col-sm-5">
+		<select  class="form-control m-b" name="setup[decimaldigits]">
+			<option value="0" {if condition = "$setup.decimaldigits == 0 "}selected{/if}>0</option>
+			<option value="1" {if condition = "$setup.decimaldigits == 1 "}selected{/if}>1</option>
+			<option value="2" {if condition = "$setup.decimaldigits == 2 "}selected{/if}>2</option>
+			<option value="3" {if condition = "$setup.decimaldigits == 3 "}selected{/if}>3</option>
+			<option value="4" {if condition = "$setup.decimaldigits == 4 "}selected{/if}>4</option>
+			<option value="5" {if condition = "$setup.decimaldigits == 5 "}selected{/if}>5</option>
+		</select>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label">默认值</label>
+
+	<div class="col-sm-5">
+		<input  type="text" class="form-control" name="setup[default]" value="{$setup.default}" size="40"  >
+	</div>
+</div>
+
+{/case}
+{case value="image"}
+<div class="form-group">
+	<label class="col-sm-4 control-label">允许上传的图片类型</label>
+
+	<div class="col-sm-5">
+		<input  type="text" class="form-control"  name="setup[upload_allowext]" value="{$setup.upload_allowext}"  >
+	</div>
+</div>
+
+{/case}
+{case value="images"}
+<div class="form-group">
+	<label class="col-sm-4 control-label">允许上传的图片类型</label>
+
+	<div class="col-sm-5">
+		<input  type="text" class="form-control"  name="setup[upload_allowext]" value="{$setup.upload_allowext}"  >
+	</div>
+</div>
+{/case}
+{case value="file"}
+<div class="form-group">
+	<label class="col-sm-4 control-label">允许上传的文件类型</label>
+
+	<div class="col-sm-5">
+		<input  type="text" class="form-control" name="setup[upload_allowext]" value="{$setup.upload_allowext}"  >
+	</div>
+</div>
+
+{/case}
+{case value="linkage"}
+<table class="typeTable" cellpadding="2" cellspacing="1" width="100%">
+    <tr>
+        <td>联动菜单</td>
+        <td><select name="setup[linkageid]">
+                {foreach name="linkagelist" id="vo"}
+                <option value="{$vo.linkageid}">{$vo.name}</option>
+                {/foreach}
+            </select></td>
+    </tr>
+</table>
+{/case}
+{case value="files"}
+<table class="typeTable" cellpadding="2" cellspacing="1" width="100%">
+
+</table>
+{/case}
+{default /}
+{/switch}
+
+<script>
+    function numbertype(fieldtype){
+        if(fieldtype=='varchar'){
+            $('#numbertype').hide();
+        }else{
+            $('#numbertype').show();
+        }
+    }
+</script>
+
+<script>
+	$(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})});
+</script>

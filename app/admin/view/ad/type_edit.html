@@ -1,0 +1,123 @@
+<?php
+use think\Db;
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>H+ 后台主题UI框架 - 基本表单</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMINCSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__ADMINCSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMINCSS__/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMINCSS__/animate.min.css" rel="stylesheet">
+    <link href="__ADMINCSS__/style.min.css?v=4.0.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>添加分类</h5>
+                        <div class="ibox-tools">
+                            <a href="javascript:location=location;">刷新</a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <form action="{:url('type_edit')}" method="post" class="form-horizontal">
+							<input type="hidden" name="id" value="{:input('param.id')}">
+                            <div class="form-group">
+								<label class="col-sm-2 control-label">所属类别</label>
+								<div class="col-sm-5">
+									<select  class="form-control m-b" name="parentid">
+										<option selected value='0'>默认顶级</option>
+										<?php
+										function Show($id=0, $i=0,$parentid,$siteid)
+										{
+											$res=Db::name('adtype')->where('parentid',$id)->where('siteid',$siteid)->order('orderid asc')->select();
+											foreach($res as $vo){
+										?>
+											<option value="{$vo['id']}" {if condition="$vo.id == input('param.id')"}disabled="disabled"{/if} {if condition="$vo['id'] == $parentid"}selected{/if}>
+											<?php
+												for($j=0;$j<$i;$j++){
+													if($vo['parentid'] != 0){
+															echo '|—';
+														}
+												}
+											?>
+											{$vo['classname']}
+											</option>
+										<?php
+											Show($vo['id'],$i+1,$parentid,$siteid);
+											}
+										}
+										Show(0,0,$parentid,$siteid);
+										?>
+									</select>
+								</div>
+							</div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">广告位名称</label>
+                                <div class="col-sm-5">
+                                    <input value="{$row.classname}" name="classname" type="text" class="form-control" placeholder="请输入广告位名称" required="">
+                                </div>
+                                
+                            </div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">广告位尺寸</label>
+                                <div class="col-sm-1">
+                                    <input value="{$row.width}"  name="width" type="text" class="form-control"  required="">
+                                </div>
+                                <label class="col-sm-1 control-label" style="width:70px;padding-left:0;">宽度(px)</label>
+                                <div class="col-sm-1">
+                                    <input value="{$row.height}"  name="height" type="text" class="form-control"  required="">
+                                </div>
+                                <label class="col-sm-1 control-label" style="width:70px;padding-left:0;">高度(px)</label>
+                            </div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">是否显示</label>
+								<div class="radio i-checks">
+									<label>
+										<input {if condition="$row.checkinfo == 0"}checked{/if} type="radio" value="0" name="checkinfo" > <i></i> 显示
+										<input {if condition="$row.checkinfo == 1"}checked{/if} type="radio"  value="1" name="checkinfo"> <i></i> 不显示
+									</label>
+								</div>
+                           	</div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button class="btn btn-primary" type="submit">保存内容</button>
+                                    <button onclick="javascript:history.back();" class="btn btn-white" type="button">返回</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="__ADMINJS__/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMINJS__/bootstrap.min.js?v=3.3.5"></script>
+    <script src="__ADMINJS__/content.min.js?v=1.0.0"></script>
+    <script src="__ADMINJS__/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})});
+    </script>
+    
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<div id="leftmenu">
+    <a href="{:url('index/index')}" class="leftlogo"><img src="__INDEXIMG__/logo.png" alt=""></a>
+    <ul class="txtnavs">
+        <li><a href="{:url('index/index')}"><span>首&nbsp;页</span><b>HOME</b></a></li>
+        {volist name="category" id="vo"}
+        <li {if condition="$vo.id == input('param.catid')"}class="select"{/if} ><a href="{:getUrl($vo.id,'lists')}"><span>{$vo.catname}</span><b>{$vo.catname1}</b></a></li>
+        {/volist}
+    </ul>
+    <ul class="clf iconsnav">
+        <li>
+            <a href="#javascript:;">
+                <div class="ibox ibox"><i class="i1"></i></div>
+                <p>咨询热线</p>
+            </a>
+        </li>
+        <li>
+            <a href="#javascript:;">
+                <div class="ibox ibox"><i class="i2"></i></div>
+                <p>微信</p>
+            </a>
+        </li>
+        <li>
+            <a href="#javascript:;">
+                <div class="ibox ibox"><i class="i3"></i></div>
+                <p>网上商城</p>
+            </a>
+        </li>
+    </ul>
+
+</div>

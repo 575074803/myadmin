@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="__ADMINCSS__/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__ADMINJS__/jquery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".click").click(function(){
+  $(".tip").fadeIn(200);
+  });
+  
+  $(".tiptop a").click(function(){
+  $(".tip").fadeOut(200);
+});
+
+  $(".sure").click(function(){
+  $(".tip").fadeOut(100);
+});
+
+  $(".cancel").click(function(){
+  $(".tip").fadeOut(100);
+});
+
+});
+</script>
+</head>
+<body>
+
+	<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+    <li><a href="<?php echo url('admin/index/main');?>">首页</a></li>
+    <li><a href="">管理组管理</a></li>
+	<a href="javascript:location.reload();"  style="float:right;line-height: 40px;padding-left: 7px;padding-right: 22px;">刷新</a>
+    </ul>
+    </div>
+    
+    <div class="rightinfo">
+    <ul class="toolbar" style="margin-bottom:10px;">
+		<a href="<?php echo url('admin/adminuser/admingroup_add');?>"><li ><span><img src="__ADMINIMG__/t01.png" /></span>添加管理组</li></a>
+	</ul>
+	
+    <table class="tablelist" >
+    	<thead>
+    	<tr>
+        
+        <th style="width:50px;">编号</th>
+        <th>管理组名称</th>
+        <th>管理组描述</th>
+        <th>默认进入</th>
+        <th style="width:250px;">操作</th>
+        </tr>
+        </thead>
+        
+		<tbody>
+			<?php foreach($res as $v){?>
+			<tr>
+				
+				<td><?php echo $v['id'];?></td>
+				<td><?php echo $v['groupname'];?></td>
+				<td><?php echo $v['description'];?></td>
+				<td><?php 
+					echo $v['site'];
+				?></td>
+				
+				<td>
+					
+					<a href="<?php echo url('admin/adminuser/admingroup_up',['id'=>$v['id'],'page'=>input('param.page')]);?>" class="tablelink">修改</a>     
+					<?php if($v['id'] == 1){?>
+					<a  class="tablelink" style=" cursor: pointer;color:#808080;"> 删除</a>
+					<?php }else{?>
+					<a id="shan" shid="<?php echo $v['id']?>" class="tablelink" style=" cursor: pointer;"> 删除</a>     
+					<?php }?>
+				</td>
+			</tr> 
+			<?php }?>
+               
+        </tbody>
+    </table>
+	
+    <div class="tip">
+    	<div class="tiptop"><span>提示信息</span><a></a></div>
+        
+      <div class="tipinfo">
+        <span><img src="__ADMINIMG__/ticon.png" /></span>
+        <div class="tipright">
+        <p>是否确认对信息的修改 ？</p>
+        <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+        </div>
+        </div>
+        
+        <div class="tipbtn">
+        <input name="" type="button"  class="sure" value="确定" />&nbsp;
+        <input name="" type="button"  class="cancel" value="取消" />
+        </div>
+    
+    </div>
+    
+    
+    <!--  删除 -->
+   <script>
+		$("table a#shan").click(function(){
+			$("#s").attr("style","display:block");
+			var id = $(this).attr("shid");
+			var page = $(this).attr("page");
+			
+			
+			$("#delid").attr("value",id);
+			$("#delpage").attr("value",page);
+			
+		});
+		
+	</script>
+	<div id="s" class="tip" style="display:none;">
+    	<div class="tiptop"><span>删除提示</span><a ></a></div>
+        
+      <div class="tipinfo">
+        <span><img src="__ADMINIMG__/ticon.png" /></span>
+        <div class="tipright">
+        <p>是否确认删除此信息？</p>
+        <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+        </div>
+        </div>
+        
+        <div class="tipbtn">
+			<input name="" type="button"  class="cancel" value="取消" style="float:right;margin-right:30px;"/>
+		<form action="<?php echo url('admin/adminuser/admingroup_del')?>" method="post" style="float:right;">
+			<input id="delid" type="hidden" name="id" value="">	
+			<input id="delpage" type="hidden" name="page" value="<?php echo input('param.page');?>">	
+			<input type="hidden" name="cate_id" value="<?php echo input('param.cate_id');?>">	
+				
+			<input type="submit"  class="sure" value="确定" />&nbsp;
+		</form>	
+			
+        </div>
+    
+    </div>
+    
+    </div>
+    
+    <script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+
+</body>
+
+</html>

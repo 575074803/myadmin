@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>H+ 后台主题UI框架 - 基本表单</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMINCSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">
+    <link href="__ADMINCSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMINCSS__/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMINCSS__/animate.min.css" rel="stylesheet">
+    <link href="__ADMINCSS__/style.min.css?v=4.0.0" rel="stylesheet">
+	
+	<script src="__ADMINJS__/jquery-2.1.1.js"></script>
+	
+	<!-- layui -->
+	<link rel="stylesheet" href="__ADMINCSS__/style.css"  media="all">
+	<link rel="stylesheet" href="__LAYUI__/css/layui.css"  media="all">
+	<script src="__LAYUI__/layui.js" charset="utf-8"></script>
+	<!-- layui下拉多选-->
+	<script src="__LAYUI__/layui-mz-min.js" charset="utf-8"></script>
+	
+	
+	<!-- ueditor编辑器 -->
+	<script type="text/javascript" charset="utf-8" src="__ADMIN__/ueditor/ueditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="__ADMIN__/ueditor/ueditor.all.min.js"> </script>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>添加会员</h5>
+                        <div class="ibox-tools">
+                            <a href="javascript:location=location;"> 刷新</a>
+                        </div>
+                    </div>
+					<form action="{:url('users/add')}" method="post" class="form-horizontal" >
+					<div class="ibox-content">
+                        <div class="form-group">
+							<label class="col-sm-2 control-label">所属用户组</label>
+							<div class="col-sm-5">
+								<select  class="form-control m-b" id="level" name="level">
+									{volist name="memeber_level" id="vo"}
+									<option value="{$vo.id}"  >{$vo.level_name}</option>
+									{/volist}
+								</select>
+							</div>
+						</div>	
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">会员名</label>
+
+                            <div class="col-sm-5">
+                                <input name="username" type="text" class="form-control" placeholder="请输入会员名称" required="" >
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">邮箱号码</label>
+
+                            <div class="col-sm-5">
+                                <input name="email" type="text" class="form-control" placeholder="请输入邮箱号码"  >
+                            </div>
+                        </div>
+                        
+						<div class="form-group">
+                            <label class="col-sm-2 control-label">联系电话</label>
+
+                            <div class="col-sm-5">
+                                <input name="mobile" type="text" class="form-control" placeholder="请输入联系电话"  >
+                            </div>
+                        </div>
+						
+						<div class="form-group">
+                            <label class="col-sm-2 control-label">密码</label>
+
+                            <div class="col-sm-5">
+                                <input id="password" name="password" type="password" class="form-control" placeholder="请输入密码" >
+                            </div>
+                            <label class="col-sm-1 control-label" style="width:150px;color:#A2A4A5;">请输入6-12位密码</label>
+                        </div>
+						
+						<div class="form-group">
+							<label class="col-sm-2 control-label">性别</label>
+							<div class="col-sm-5">
+								<div class="radio i-checks">
+									<label>
+										<input type="radio" checked value="0" name="sex"> <i></i> 男
+										<input type="radio"  value="1" name="sex"> <i></i> 女
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+                            <label class="col-sm-2 control-label">QQ</label>
+                            <div class="col-sm-5">
+                                <input name="qqnum" type="text" class="form-control" placeholder="请输入QQ"  >
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="form-group">
+							<label class="col-sm-2 control-label">地址</label>
+							<div id="address">
+								<div class="col-sm-2" >
+									<select  class="form-control m-b prov " style="width:200px;" name="live_prov"></select>	
+								</div>
+								<div class="col-sm-2" >
+									<select  class="form-control m-b city " style="width:200px;" name="live_city"></select>
+								</div>
+								<div class="col-sm-2" >
+									<select  class="form-control m-b dist " style="width:200px;" name="live_dist"></select>
+								</div>
+							</div>
+						</div>
+						
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="submit">保存内容</button>
+                                <button onclick="javascript:history.back();" class="btn btn-white" type="button">返回</button>
+                            </div>
+                        </div>
+                   	</div>
+					</form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="__ADMINJS__/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",})});
+    </script>
+    <script>
+		(function($) {
+			$.fn.citySelect = function(settings) {
+				if (this.length < 1) {
+					return;
+				}
+				// 默认值
+				settings = $.extend({
+					url: "__ADMINJS__/city.min.js",
+					prov: null,
+					city: null,
+					dist: null,
+					nodata: null,
+					required: true
+				}, settings);
+
+				var box_obj = this;
+				var prov_obj = box_obj.find(".prov");
+				var city_obj = box_obj.find(".city");
+				var dist_obj = box_obj.find(".dist");
+				var prov_val = settings.prov;
+				var city_val = settings.city;
+				var dist_val = settings.dist;
+				var select_prehtml = (settings.required) ? "" : "<option value=''>请选择</option>";
+				var city_json;
+
+				// 赋值市级函数
+				var cityStart = function() {
+					var prov_id = prov_obj.get(0).selectedIndex;
+					if (!settings.required) {
+						prov_id--;
+					}
+					;
+					city_obj.empty().attr("disabled", true);
+					dist_obj.empty().attr("disabled", true);
+
+					if (prov_id < 0 || typeof (city_json.citylist[prov_id].c) == "undefined") {
+						if (settings.nodata == "none") {
+							city_obj.css("display", "none");
+							dist_obj.css("display", "none");
+						} else if (settings.nodata == "hidden") {
+							city_obj.css("visibility", "hidden");
+							dist_obj.css("visibility", "hidden");
+						}
+						;
+						return;
+					}
+					;
+
+					// 遍历赋值市级下拉列表
+					temp_html = select_prehtml;
+					$.each(city_json.citylist[prov_id].c, function(i, city) {
+						temp_html += "<option value='" + city.n + "'>" + city.n + "</option>";
+					});
+					city_obj.html(temp_html).attr("disabled", false).css({"display": "", "visibility": ""});
+					distStart();
+				};
+
+				// 赋值地区（县）函数
+				var distStart = function() {
+					var prov_id = prov_obj.get(0).selectedIndex;
+					var city_id = city_obj.get(0).selectedIndex;
+					if (!settings.required) {
+						prov_id--;
+						city_id--;
+					}
+					;
+					dist_obj.empty().attr("disabled", true);
+
+					if (prov_id < 0 || city_id < 0 || typeof (city_json.citylist[prov_id].c[city_id].a) == "undefined") {
+						if (settings.nodata == "none") {
+							dist_obj.css("display", "none");
+							$('.quxian').css('display','none');
+							
+						} else if (settings.nodata == "hidden") {
+							dist_obj.css("visibility", "hidden");
+							
+						}
+						;
+						return;
+					}else{
+					
+					$('.quxian').css('display','block');
+					}
+					;
+
+					// 遍历赋值市级下拉列表
+					temp_html = select_prehtml;
+					$.each(city_json.citylist[prov_id].c[city_id].a, function(i, dist) {
+						temp_html += "<option value='" + dist.s + "'>" + dist.s + "</option>";
+					});
+					dist_obj.html(temp_html).attr("disabled", false).css({"display": "", "visibility": ""});
+				};
+
+				var init = function() {
+					// 遍历赋值省份下拉列表
+					temp_html = select_prehtml;
+					$.each(city_json.citylist, function(i, prov) {
+						temp_html += "<option value='" + prov.p + "'>" + prov.p + "</option>";
+					});
+					prov_obj.html(temp_html);
+
+					// 若有传入省份与市级的值，则选中。（setTimeout为兼容IE6而设置）
+					setTimeout(function() {
+						if (settings.prov != null) {
+							prov_obj.val(settings.prov);
+							cityStart();
+							setTimeout(function() {
+								if (settings.city != null) {
+									city_obj.val(settings.city);
+									distStart();
+									setTimeout(function() {
+										if (settings.dist != null) {
+											dist_obj.val(settings.dist);
+										}
+										;
+									}, 1);
+								}
+								;
+							}, 1);
+						}
+						;
+					}, 1);
+
+					// 选择省份时发生事件
+					prov_obj.bind("change", function() {
+						cityStart();
+					});
+
+					// 选择市级时发生事件
+					city_obj.bind("change", function() {
+						distStart();
+					});
+				};
+
+				// 设置省市json数据
+				if (typeof (settings.url) == "string") {
+					$.getJSON(settings.url, function(json) {
+						city_json = json;
+						init();
+					});
+				} else {
+					city_json = settings.url;
+					init();
+				}
+				;
+			};
+		})(jQuery);
+				
+	</script>
+	
+    <script type="text/javascript">
+		
+        $(function() {
+            $("#address").citySelect({
+                prov: "浙江",
+                city: "杭州",
+                dist: "西湖区",
+                nodata: "none"
+            });
+        });
+    </script>
+</body>
+
+</html>

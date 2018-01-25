@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   	<title>H+ 11后台主题UI框架 - 数据表格</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> 
+    
+    <!--<link href="__ADMINCSS__/bootstrap.min.css?v=3.3.5" rel="stylesheet">-->
+    <link href="__ADMINCSS__/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    
+	<link href="__ADMINCSS__/animate.min.css" rel="stylesheet">
+    <link href="__ADMINCSS__/style.min.css?v=4.0.0" rel="stylesheet">
+   	
+   	<!-- layui -->
+	<link rel="stylesheet" href="__ADMINCSS__/style.css"  media="all">
+	<link rel="stylesheet" href="__LAYUI__/css/layui.css"  media="all">
+	<script src="__LAYUI__/layui.js" charset="utf-8"></script>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+       
+		
+		<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>多图文详情</h5>
+                        <div class="ibox-tools">
+                            <a href="javascript:location=location;">刷新</a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+						<div class="">
+                            <a href="{:url('images_list_add',array('reply_id'=>input('param.id')))}"  class="layui-btn layui-btn-sm">添加多图文详情</a>
+                            <a href="{:url('images')}"  class="layui-btn layui-btn-primary layui-btn-sm">多图文关键字列表</a>
+                        </div>
+                        <table class="layui-table" lay-size="sm">
+						  
+						  <thead>
+	                            <tr>
+	                            	<th>编号</th>
+	                                <th>标题</th>
+	                                <th>图片</th>
+	                                <th>链接</th>
+	                                <th>创建时间</th>
+	                                <th>状态</th>
+	                                <th>操作</th>
+	                            </tr>
+	                        </thead>
+						  <tbody>
+								{volist name="res" id="vo"}
+                                <tr  id="data<?php echo $vo['id'];?>">
+                                    <td>{$vo['id']}</td>
+                                    <td>{$vo.title}</td>
+                                    <td><img src="{$vo.picurl}" style="width:100px;height:80px;"></td>
+                                    <td>{$vo.url}</td>
+									<td>{$vo.posttime | date="Y-m-d H:i:s",###}</td>
+									<td>
+										{if condition="$vo.open == 1"}
+										<a id="sta{$vo.id}" href="javascript:;" onclick="stateyes('{$tablename}',{$vo.id},'open')" class="layui-btn layui-btn-xs layui-btn-warm">显示</a>
+										{else /}
+										<a id="sta{$vo.id}" href="javascript:;" onclick="stateyes('{$tablename}',{$vo.id},'open')" class="layui-btn layui-btn-xs layui-btn-danger">不显示</a>
+										{/if}
+									</td>
+									<td>
+										<a href="{:url('images_list_edit',array('id'=>$vo['id']))}"  class="layui-btn layui-btn-xs">修改</a>
+										<a authid="{$vo['id']}" class="demo3  layui-btn layui-btn-xs layui-btn-danger">删除</a>
+									</td>
+                                </tr>
+								{/volist}
+								
+                            </tbody>
+						</table>
+
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <script src="__ADMINJS__/jquery-2.1.1.js"></script>
+    <script>
+    	//改变状态
+    	function stateyes(tablename,id,field){
+			$.post("{:url('admin/ajaxdo/field_status')}", { tablename:tablename,id:id,field:field}, function (data) {
+				
+				if(data.status == 'qi'){
+					$("#sta"+id).html('显示').removeClass('layui-btn-danger').addClass('layui-btn-warm');
+				}
+				
+				if(data.status == 'jing'){
+					$("#sta"+id).html('不显示').removeClass('layui-btn-warm').addClass('layui-btn-danger');
+				}
+				
+			},'json');
+		}
+    	
+    </script>
+    <script>
+    	//单个排序更改
+		function ajaxSort(tablename,id){
+			var tval = $("#ord"+id).val(); 
+			$.post("<?php echo url('admin/Ajaxdo/ajax_sort');?>", {tablename:tablename,id:id,tval:tval}, function (data) {
+				if(data.status == 200){
+					//alert(data.msg);
+					location=location;
+				}	
+			},'json');
+			
+		}
+    
+    	//所有值排序
+    	function changeOrderid(tablename){
+    		var orderids = '';
+    		var ids = '';
+    		$("input[name='orderid']").each(function() {
+				orderids += $(this).val() + ",";
+				ids += $(this).attr("authid")+',';
+			});
+			
+			$.post("<?php echo url('admin/Ajaxdo/ajax_all_sort');?>", {tablename:tablename,ids:ids,orderids:orderids}, function (data) {
+				if(data.status == 200){
+					location=location;
+				}	
+				
+			},'json');
+			
+    	}
+    	
+    </script>
+	<!-- 删除弹出框 -->
+	<script>
+		$('.demo3').click(function () {
+			var authid = $(this).attr("authid");
+			if(confirm("确定删除此栏目吗？"))
+			{
+				$.post("<?php echo url('admin/wechat/images_list_del');?>",{tablename:"{$tablename}",id:authid,whereid:'id'}, function (data) {
+					if(data.status == 200){
+						//alert(data.msg);
+						$("#data"+authid).css("display","none");
+					}
+					if(data.status == 404){
+						alert(data.msg);
+						return false;
+					}
+				},'json');
+			}
+			else
+			{
+				return false;
+			}
+		});
+	</script>
+</body>
+
+</html>
